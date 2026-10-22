@@ -235,10 +235,8 @@ public class Program
             }
         }
         // Configure the HTTP request pipeline.
-       
             app.UseSwagger();
             app.UseSwaggerUI();
-       
 
         app.UseHttpsRedirection();
         app.UseCors("AllowFrontend");

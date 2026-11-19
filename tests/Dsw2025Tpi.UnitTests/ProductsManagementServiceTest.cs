@@ -48,7 +48,7 @@ public class ProductsManagementServiceTests
 
         result.Should().NotBeNull();
         result.Id.Should().NotBeEmpty();
-        result.Sku.Should().Be("PROD-01");
+        result.Sku.Should().Be("PRODUCTO-INCORRECTO");
         result.IsActive.Should().BeTrue();
         _repoMock.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
     }

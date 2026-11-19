@@ -1,3 +1,4 @@
+
 name: Build and Deploy to Azure App Service (Publish Profile)
 
 on:
@@ -13,8 +14,33 @@ env:
   DOTNET_VERSION: 8.0.x
 
 jobs:
-  build-and-deploy:
+  # PRIMERO: ejecutar todas las pruebas
+  run-tests:
+    name: Ejecutar pruebas automatizadas
     runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Obtener el código
+        uses: actions/checkout@v4
+
+      - name: 2. Instalar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: 3. Restaurar dependencias
+        run: dotnet restore Dsw2025Tpi.sln
+
+      - name: 4. Ejecutar pruebas unitarias y de integración
+        run: dotnet test Dsw2025Tpi.sln --no-restore --configuration Release
+
+  # SEGUNDO: construir y desplegar solo si las pruebas pasan
+  build-and-deploy:
+    name: Construir Docker y desplegar en Azure
+    needs: run-tests
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+
     steps:
       - name: 1. Obtener el código
         uses: actions/checkout@v4
